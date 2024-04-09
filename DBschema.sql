@@ -16,6 +16,21 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `appUsers`
+--
+
+DROP TABLE IF EXISTS `appUsers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `appUsers` (
+  `username` varchar(20) NOT NULL,
+  `password` varchar(45) DEFAULT NULL,
+  `tipo` varchar(7) DEFAULT NULL,
+  PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `clientes`
 --
 
@@ -48,6 +63,23 @@ CREATE TABLE `servicios` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `userClientes`
+--
+
+DROP TABLE IF EXISTS `userClientes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `userClientes` (
+  `userName` varchar(45) NOT NULL,
+  `clienteName` varchar(45) NOT NULL,
+  PRIMARY KEY (`userName`,`clienteName`),
+  KEY `clienteName_idx` (`clienteName`),
+  CONSTRAINT `clienteName` FOREIGN KEY (`clienteName`) REFERENCES `clientes` (`nombre`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `username` FOREIGN KEY (`userName`) REFERENCES `appUsers` (`username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `vehiculos`
 --
 
@@ -74,4 +106,4 @@ CREATE TABLE `vehiculos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-31 17:12:27
+-- Dump completed on 2024-04-09 22:33:39
