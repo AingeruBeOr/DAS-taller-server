@@ -1,0 +1,26 @@
+services:
+  api:
+    build: .                                                              # Build con el Dockerfile en el directorio actual
+    ports:
+      - "80:80"
+    depends_on:
+      mysql:
+        condition: service_healthy                                         # Espera a que el servicio MySQL esté listo antes de iniciar el servicio API
+    command: uvicorn api:app --reload --host 0.0.0.0 --port 80             # Overrides the default command declared by the container image
+    volumes:
+      - ./api:/app                                                         # Monta el directorio ./api/ en /app del contenedor para poder editar el código sin tener que reconstruir la imagen
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=DAS2024                                       # TODO igual esto no se debería subir a git/GitHub
+      - MYSQL_DATABASE=taller                                             # La crea al iniciar el contenedor
+    volumes:
+      - ./DBschema.sql:/docker-entrypoint-initdb.d/0schema.sql            # Metemos el archivo en la carpeta indicada de MySQL para que cuando se inicie el sistema por primera vez se cargue la estructura de la base de datos
+      - ./DBexampleData.sql:/docker-entrypoint-initdb.d/1exampleData.sql
+    healthcheck:                                                          # Check if container is ready to recive connections
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
