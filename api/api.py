@@ -57,3 +57,11 @@ def login(username: str, password: str):
             return {"message": "Incorrect password"}
     else:
         return {"message": "User does not exist"}
+
+@app.get("/register")
+def register(username: str, password: str, tipo: str):
+    if db.userExists(username):
+        return {"message": "User already exists"}
+    else:
+        db.createUser(username, password, tipo)
+        return {"message": "User created"}

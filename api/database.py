@@ -41,3 +41,10 @@ def passwordCorrect(username, password):
     cursor.execute(sql, (username, password))
     result = cursor.fetchall()
     return len(result) > 0
+
+def createUser(username, password, tipo):
+    cursor = database.cursor()
+    sql = "INSERT INTO appUsers (username, password, tipo) VALUES (%s, %s, %s)"
+    cursor.execute(sql, (username, password, tipo))
+    database.commit()
+    return cursor.rowcount
