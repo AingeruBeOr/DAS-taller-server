@@ -52,11 +52,15 @@ def get_services():
 def login(username: str, password: str):
     if db.userExists(username):
         if db.passwordCorrect(username, password):
-            return {"message": True}
+            return {"message": "true"}
         else:
             return {"message": "Incorrect password"}
     else:
         return {"message": "User does not exist"}
+    
+@app.get("/userType")
+def userType(username: str):
+    return {"message": db.getUserType(username)}
 
 @app.get("/register")
 def register(username: str, password: str, tipo: str):
@@ -68,12 +72,37 @@ def register(username: str, password: str, tipo: str):
 
 @app.get("/clientsFromUser")
 def getClientsFromUser(username: str):
-    return db.getClientsFromUser(username)
+    clientes = db.getClientsFromUser(username)
+    response = []
+    for cliente in clientes:
+        response.append({
+            'nombre': cliente[0],
+            'telefono': cliente[1],
+            'email': cliente[2],
+        })
+    return response
 
 @app.get("/clientVehicles")
 def getClientVehicles(client: str):
-    return db.getClientVehicles(client)
+    vehiculos = db.getClientVehicles(client)
+    response = []
+    for vehiculo in vehiculos:
+        response.append({
+            'matricula': vehiculo[0],
+            'marca': vehiculo[1],
+            'modelo': vehiculo[2],
+            'nombreCliente': vehiculo[3],
+        })
+    return response
 
 @app.get("/vehicleServices")
 def getVehicleServices(matricula: str):
-    return db.getVehicleServices(matricula)
+    servicios = db.getVehicleServices(matricula)
+    response = []
+    for servicio in servicios:
+        response.append({
+            'fecha': servicio[0],
+            'matricula': servicio[1],
+            'descripcion': servicio[2],
+        })
+    return response

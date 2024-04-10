@@ -33,6 +33,7 @@ def userExists(username):
     sql = "SELECT * FROM appUsers WHERE username = %s"
     cursor.execute(sql, (username,))
     result = cursor.fetchall()
+    print("Number of rows: ", len(result))
     return len(result) > 0
 
 def passwordCorrect(username, password):
@@ -51,7 +52,7 @@ def createUser(username, password, tipo):
 
 def getClientsFromUser(username):
     cursor = database.cursor()
-    sql = """SELECT C.clientes, C.teléfono, C.email 
+    sql = """SELECT C.nombre, C.teléfono, C.email 
              FROM userClientes, clientes as C 
              WHERE userName = %s AND C.nombre = userClientes.clienteName"""
     cursor.execute(sql, (username,))
@@ -71,3 +72,10 @@ def getVehicleServices(matricula):
     cursor.execute(sql, (matricula,))
     result = cursor.fetchall()
     return result
+
+def getUserType(username):
+    cursor = database.cursor()
+    sql = "SELECT tipo FROM appUsers WHERE username = %s"
+    cursor.execute(sql, (username,))
+    result = cursor.fetchall()
+    return result[0][0]
