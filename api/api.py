@@ -65,3 +65,15 @@ def register(username: str, password: str, tipo: str):
     else:
         db.createUser(username, password, tipo)
         return {"message": "User created"}
+
+@app.get("/clientsFromUser")
+def getClientsFromUser(username: str):
+    return db.getClientsFromUser(username)
+
+@app.get("/clientVehicles")
+def getClientVehicles(client: str):
+    return db.getClientVehicles(client)
+
+@app.get("/vehicleServices")
+def getVehicleServices(matricula: str):
+    return db.getVehicleServices(matricula)
