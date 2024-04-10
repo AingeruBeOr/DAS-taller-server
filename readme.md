@@ -1,16 +1,24 @@
 # API and DB
 
-## API Rest
+## Descriptions
+
+### API Rest
 
 Using FastAPI (Python) for the API REST.
 
 Using uvicorn for the production server.
 
-## DB
+### DB
 
 Using mysql
 
-## DEV environment
+## Running
+
+Different environments for different purposes:
+
+* DEV environment
+
+### DEV environment
 
 Start DEV environment using: `docker compose -f docker-compose-dev.yaml up`
 
