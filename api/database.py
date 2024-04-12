@@ -79,3 +79,31 @@ def getUserType(username):
     cursor.execute(sql, (username,))
     result = cursor.fetchall()
     return result[0][0]
+
+def insertService(fecha, matricula, descripcion):
+    cursor = database.cursor()
+    sql = "INSERT INTO servicios (fecha, matricula, descripcion) VALUES (%s, %s, %s)"
+    cursor.execute(sql, (fecha, matricula, descripcion))
+    database.commit()
+    return cursor.rowcount
+
+def insertVehicle(matricula, marca, modelo, nombreCliente):
+    cursor = database.cursor()
+    sql = "INSERT INTO vehiculos (matricula, marca, modelo, nombreCliente) VALUES (%s, %s, %s, %s)"
+    cursor.execute(sql, (matricula, marca, modelo, nombreCliente))
+    database.commit()
+    return cursor.rowcount
+
+def insertClient(nombre, telefono, email):
+    cursor = database.cursor()
+    sql = "INSERT INTO clientes (nombre, teléfono, email) VALUES (%s, %s, %s)"
+    cursor.execute(sql, (nombre, telefono, email))
+    database.commit()
+    return cursor.rowcount
+
+def insertUserClient(username, clientName):
+    cursor = database.cursor()
+    sql = "INSERT INTO userClientes (userName, clienteName) VALUES (%s, %s)"
+    cursor.execute(sql, (username, clientName))
+    database.commit()
+    return cursor.rowcount

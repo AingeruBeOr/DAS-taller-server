@@ -1,5 +1,24 @@
 from fastapi import FastAPI
 import database as db
+from pydantic import BaseModel
+
+
+class Cliente(BaseModel):
+    nombre: str
+    telefono: int
+    email: str
+
+class Vehiculo(BaseModel):
+    matricula: str
+    marca: str
+    modelo: str
+    nombreCliente: str
+
+class Servicio(BaseModel):
+    fecha: str
+    descripcion: str
+    matricula: str
+
 
 app = FastAPI()
 
@@ -52,6 +71,7 @@ def get_services():
 def login(username: str, password: str):
     if db.userExists(username):
         if db.passwordCorrect(username, password):
+            print("Login successful for user: ", username)
             return {"message": "true"}
         else:
             return {"message": "Incorrect password"}
@@ -106,3 +126,21 @@ def getVehicleServices(matricula: str):
             'descripcion': servicio[2],
         })
     return response
+
+@app.post("/addService")
+def addService(service: Servicio):
+    rowcount = db.insertService(service.fecha, service.matricula, service.descripcion)
+    print(rowcount)
+    return {"message": "Service added"}
+
+@app.post("/addVehicle")
+def addVehicle(vehicle: Vehiculo):
+    db.insertVehicle(vehicle.matricula, vehicle.marca, vehicle.modelo, vehicle.nombreCliente)
+    return {"message": "Vehicle added"}
+
+@app.post("/addClient")
+def addClient(client: Cliente, username: str):
+    rowcount = db.insertClient(client.nombre, client.telefono, client.email)
+    rowcount2 = db.insertUserClient(username, client.nombre)
+    print(rowcount)
+    return {"message": "Client added"}
