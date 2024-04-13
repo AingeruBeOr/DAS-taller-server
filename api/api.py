@@ -1,6 +1,10 @@
 from fastapi import FastAPI
+import firebase_admin.messaging
 import database as db
 from pydantic import BaseModel
+import firebase_admin
+from firebase_admin import credentials
+import fcm
 
 
 class Cliente(BaseModel):
@@ -21,6 +25,9 @@ class Servicio(BaseModel):
 
 
 app = FastAPI()
+
+cred = credentials.Certificate("das-android-firebase-adminsdk.json")
+default_app = firebase_admin.initialize_app(credential=cred)            # Set the service account
 
 @app.get("/")
 def root():
@@ -144,3 +151,19 @@ def addClient(client: Cliente, username: str):
     rowcount2 = db.insertUserClient(username, client.nombre)
     print(rowcount)
     return {"message": "Client added"}
+
+@app.post("/FCMdevice")
+def addFCMtoken(token: str):
+    if db.FCMtokenExists(token):
+        print("Token already exists: ", token)
+        return {"message": "Token already exists"}
+    else: 
+        rowcount = db.insertFCMtoken(token)
+        print("New token added: ", token)
+        return {"message": "Token added"}
+    
+
+@app.get("/messageToEveryone")
+def send_message_to_everyone():
+    fcm.send_messages_to_everyone()
+    return {"message": "Message sent"}

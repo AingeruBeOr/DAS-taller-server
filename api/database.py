@@ -107,3 +107,24 @@ def insertUserClient(username, clientName):
     cursor.execute(sql, (username, clientName))
     database.commit()
     return cursor.rowcount
+
+def FCMtokenExists(token):
+    cursor = database.cursor()
+    sql = "SELECT * FROM FCMtokens WHERE token = %s"
+    cursor.execute(sql, (token,))
+    result = cursor.fetchall()
+    return len(result) > 0
+
+def insertFCMtoken(token):
+    cursor = database.cursor()
+    sql = "INSERT INTO FCMtokens (token) VALUES (%s)"
+    cursor.execute(sql, (token,))
+    database.commit()
+    return cursor.rowcount
+
+def getFCMtokens():
+    cursor = database.cursor()
+    sql = "SELECT * FROM FCMtokens"
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result
