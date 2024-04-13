@@ -24,3 +24,15 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+
+  web:
+    build: 
+      dockerfile: Dockerfile.web
+    ports:
+      - "3000:3000"
+    environment:
+      - DEBUG=True
+    depends_on:
+      - api
+    volumes:
+      - ./web:/app

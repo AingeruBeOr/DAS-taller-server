@@ -1,0 +1,15 @@
+FROM python:latest
+
+# Actualizamos el sistema y pip
+RUN apt update && pip install --upgrade pip
+
+# Nos cambiamos al directorio /app del contenedor
+WORKDIR /app
+
+COPY ./web/ /app
+
+# Instalamos las dependencias
+RUN pip install -r requirements.txt
+
+# Comando que se ejecutará al iniciar el contenedor
+CMD ["python", "app.py"]
