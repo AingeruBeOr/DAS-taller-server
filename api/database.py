@@ -135,3 +135,10 @@ def insertVehicleDocumentation(matricula, documentacionPath):
     cursor.execute(sql, (documentacionPath, matricula))
     database.commit()
     return cursor.rowcount
+
+def getVehicleDocumentationPath(matricula):
+    cursor = database.cursor()
+    sql = "SELECT documentacionPath FROM vehiculos WHERE matricula = %s"
+    cursor.execute(sql, (matricula,))
+    result = cursor.fetchall()
+    return result[0][0]

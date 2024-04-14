@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import firebase_admin.messaging
 import database as db
 from pydantic import BaseModel
@@ -182,3 +183,8 @@ async def vehicleDocumentation(matricula: str, image: UploadFile):
     print(f"Adding {image.filename} to {matricula} vehicle with size {len(content)} bytes")
     db.insertVehicleDocumentation(matricula, image.filename)
     return {"message": "Document added"}
+
+@app.get("/getVehicleDocumentation")
+def getVehicleDocumentation(matricula: str):
+    documentacionPath = db.getVehicleDocumentationPath(matricula)
+    return FileResponse(f"documentaciones/{documentacionPath}")
