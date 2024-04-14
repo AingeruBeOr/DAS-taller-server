@@ -1,10 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
+from fastapi.staticfiles import StaticFiles
 import firebase_admin.messaging
 import database as db
 from pydantic import BaseModel
 import firebase_admin
 from firebase_admin import credentials
 import fcm
+import os
 
 
 class Cliente(BaseModel):
@@ -24,7 +26,10 @@ class Servicio(BaseModel):
     matricula: str
 
 
+if not os.path.exists('./documentaciones'): os.mkdir('./documentaciones')
+
 app = FastAPI()
+app.mount("/documentaciones", StaticFiles(directory="documentaciones"), name="documentaciones")
 
 cred = credentials.Certificate("das-android-firebase-adminsdk.json")
 default_app = firebase_admin.initialize_app(credential=cred)            # Set the service account
@@ -167,3 +172,13 @@ def addFCMtoken(token: str):
 def send_message_to_everyone():
     fcm.send_messages_to_everyone()
     return {"message": "Message sent"}
+
+@app.post("/vehicleDocumentation")
+async def vehicleDocumentation(matricula: str, image: UploadFile):
+    content = await image.read()
+    with open(f"documentaciones/{image.filename}", "wb") as file:
+        file.write(content)
+    print(f"File type {image.content_type}")
+    print(f"Adding {image.filename} to {matricula} vehicle with size {len(content)} bytes")
+    db.insertVehicleDocumentation(matricula, image.filename)
+    return {"message": "Document added"}

@@ -104,6 +104,7 @@ CREATE TABLE `vehiculos` (
   `marca` varchar(45) DEFAULT NULL,
   `modelo` varchar(45) DEFAULT NULL,
   `nombreCliente` varchar(45) DEFAULT NULL,
+  `documentacion` blob,
   PRIMARY KEY (`matricula`),
   KEY `nombreCliente_idx` (`nombreCliente`),
   CONSTRAINT `nombreCliente` FOREIGN KEY (`nombreCliente`) REFERENCES `clientes` (`nombre`) ON DELETE CASCADE ON UPDATE CASCADE

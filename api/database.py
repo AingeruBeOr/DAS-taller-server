@@ -128,3 +128,10 @@ def getFCMtokens():
     cursor.execute(sql)
     result = cursor.fetchall()
     return result
+
+def insertVehicleDocumentation(matricula, documentacionPath):
+    cursor = database.cursor()
+    sql = "UPDATE vehiculos SET documentacionPath = %s WHERE matricula = %s"
+    cursor.execute(sql, (documentacionPath, matricula))
+    database.commit()
+    return cursor.rowcount
