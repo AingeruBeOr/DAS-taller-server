@@ -8,6 +8,8 @@ import firebase_admin
 from firebase_admin import credentials
 import fcm
 import os
+from datetime import datetime
+import matplotlib.pyplot as plt
 
 
 class Cliente(BaseModel):
@@ -28,9 +30,11 @@ class Servicio(BaseModel):
 
 
 if not os.path.exists('./documentaciones'): os.mkdir('./documentaciones')
+if not os.path.exists('./static/widgetPlots'): os.mkdir('./static/widgetPlots')
 
 app = FastAPI()
 app.mount("/documentaciones", StaticFiles(directory="documentaciones"), name="documentaciones")
+app.mount("/widgetPlots", StaticFiles(directory="static/widgetPlots"), name="widgetPlots")
 
 cred = credentials.Certificate("das-android-firebase-adminsdk.json")
 default_app = firebase_admin.initialize_app(credential=cred)            # Set the service account
@@ -188,3 +192,63 @@ async def vehicleDocumentation(matricula: str, image: UploadFile):
 def getVehicleDocumentation(matricula: str):
     documentacionPath = db.getVehicleDocumentationPath(matricula)
     return FileResponse(f"documentaciones/{documentacionPath}")
+
+@app.delete("/deleteVehicle")
+def deleteVehicle(matricula: str):
+    db.deleteVehicle(matricula)
+    return {"message": "Vehicle deleted"}
+
+@app.delete("/deleteClient")
+def deleteClient(nombre: str):
+    db.deleteCliente(nombre)
+    return {"message": "Client deleted"}
+
+@app.delete("/deleteService")
+def deleteService(fecha: str, matricula: str):
+    db.deleteService(fecha, matricula)
+    return {"message": "Service deleted"}
+
+@app.get("/generateWidgetGraph")
+def generateWidgetGraph(taller: str):
+    result = db.getTallerServices(taller)
+    result = [date_list[0] for date_list in result]
+    counts = monthResults(result)
+    barPlot(counts, taller)
+    return {"message": f"http://34.155.61.4/widgetPlots/{taller}.png"}
+
+def monthResults(results):
+    diction = {
+        'current': 0,
+        '-1': 0,
+        '-2': 0
+    }
+
+    current_month, current_year = datetime.now().month, datetime.now().year
+    p_month, p_year = getPreviousMonthAndYearTo(current_month, current_year)
+    pp_month, pp_year = getPreviousMonthAndYearTo(p_month, p_year)
+
+    for result in results:
+        date = datetime.strptime(result, "%d/%m/%Y")
+        if date.month == current_month and date.year == current_year:
+            diction['current'] += 1
+        elif date.month == p_month and date.year == p_year:
+            diction['-1'] += 1
+        elif date.month == pp_month and date.year == pp_year:
+            diction['-2'] += 1
+    return diction
+
+def getPreviousMonthAndYearTo(month, year):
+    if month == 1:
+        return 12, year - 1
+    else:
+        return month - 1, year
+
+def barPlot(counts, taller):
+    current_month, current_year = datetime.now().month, datetime.now().year
+    p_month, p_year = getPreviousMonthAndYearTo(current_month, current_year)
+    pp_month, _ = getPreviousMonthAndYearTo(p_month, p_year)
+
+    months = [str(pp_month), str(p_month), str(current_month) + ' (Actual)']
+    values = [counts['-2'], counts['-1'], counts['current']]
+    plt.bar(months, values)
+    plt.savefig(f'./static/widgetPlots/{taller}.png')

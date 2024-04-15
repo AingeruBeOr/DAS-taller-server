@@ -142,3 +142,36 @@ def getVehicleDocumentationPath(matricula):
     cursor.execute(sql, (matricula,))
     result = cursor.fetchall()
     return result[0][0]
+
+def deleteCliente(client):
+    cursor = database.cursor()
+    sql = "DELETE FROM clientes WHERE nombre = %s"
+    cursor.execute(sql, (client,))
+    database.commit()
+    return cursor.rowcount
+
+def deleteVehicle(matricula):
+    cursor = database.cursor()
+    sql = "DELETE FROM vehiculos WHERE matricula = %s"
+    cursor.execute(sql, (matricula,))
+    database.commit()
+    return cursor.rowcount
+
+def deleteService(fecha, matricula):
+    cursor = database.cursor()
+    sql = "DELETE FROM servicios WHERE fecha = %s AND matricula = %s"
+    cursor.execute(sql, (fecha, matricula))
+    database.commit()
+    return cursor.rowcount
+
+def getTallerServices(taller):
+    cursor = database.cursor()
+    sql = """SELECT s.fecha
+            FROM servicios AS s
+            INNER JOIN vehiculos AS v ON s.matricula = v.matricula
+            INNER JOIN clientes AS c ON v.nombreCliente = c.nombre
+            INNER JOIN userClientes AS uc ON c.nombre = uc.clienteName
+            WHERE uc.userName = %s"""
+    cursor.execute(sql, (taller,))
+    result = cursor.fetchall()
+    return result
