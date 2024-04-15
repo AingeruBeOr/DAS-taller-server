@@ -252,3 +252,16 @@ def barPlot(counts, taller):
     values = [counts['-2'], counts['-1'], counts['current']]
     plt.bar(months, values)
     plt.savefig(f'./static/widgetPlots/{taller}.png')
+
+@app.get("/clientsLocations")
+def getClientsLocations(user: str):
+    clientLocations = db.getClientsLocations(user)
+    clientLocations = [
+        {
+            'nombre': client[0],
+            'latitude': client[1],
+            'longitude': client[2],
+        }
+        for client in clientLocations
+    ]
+    return clientLocations

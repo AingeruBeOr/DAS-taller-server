@@ -54,6 +54,8 @@ CREATE TABLE `clientes` (
   `nombre` varchar(20) NOT NULL,
   `teléfono` int DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
+  `latitude` varchar(45) DEFAULT NULL,
+  `longitude` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -104,7 +106,7 @@ CREATE TABLE `vehiculos` (
   `marca` varchar(45) DEFAULT NULL,
   `modelo` varchar(45) DEFAULT NULL,
   `nombreCliente` varchar(45) DEFAULT NULL,
-  `documentacion` blob,
+  `documentacionPath` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`matricula`),
   KEY `nombreCliente_idx` (`nombreCliente`),
   CONSTRAINT `nombreCliente` FOREIGN KEY (`nombreCliente`) REFERENCES `clientes` (`nombre`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -120,4 +122,4 @@ CREATE TABLE `vehiculos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-13 16:37:49
+-- Dump completed on 2024-04-15 17:45:00

@@ -175,3 +175,13 @@ def getTallerServices(taller):
     cursor.execute(sql, (taller,))
     result = cursor.fetchall()
     return result
+
+def getClientsLocations(user):
+    cursor = database.cursor()
+    sql = """SELECT c.nombre, c.latitude, c.longitude
+            FROM clientes AS c
+            INNER JOIN userClientes AS uc ON c.nombre = uc.clienteName
+            WHERE uc.userName = %s"""
+    cursor.execute(sql, (user,))
+    result = cursor.fetchall()
+    return result
