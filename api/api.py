@@ -156,8 +156,8 @@ def addVehicle(vehicle: Vehiculo):
     return {"message": "Vehicle added"}
 
 @app.post("/addClient")
-def addClient(client: Cliente, username: str):
-    rowcount = db.insertClient(client.nombre, client.telefono, client.email)
+def addClient(client: Cliente, username: str, latitude: str, longitude: str):
+    rowcount = db.insertClient(client.nombre, client.telefono, client.email, latitude, longitude)
     rowcount2 = db.insertUserClient(username, client.nombre)
     print(rowcount)
     return {"message": "Client added"}

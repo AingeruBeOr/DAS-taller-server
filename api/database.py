@@ -94,10 +94,10 @@ def insertVehicle(matricula, marca, modelo, nombreCliente):
     database.commit()
     return cursor.rowcount
 
-def insertClient(nombre, telefono, email):
+def insertClient(nombre, telefono, email, latitude, longitude):
     cursor = database.cursor()
-    sql = "INSERT INTO clientes (nombre, teléfono, email) VALUES (%s, %s, %s)"
-    cursor.execute(sql, (nombre, telefono, email))
+    sql = "INSERT INTO clientes (nombre, teléfono, email, latitude, longitude) VALUES (%s, %s, %s, %s, %s)"
+    cursor.execute(sql, (nombre, telefono, email, latitude, longitude))
     database.commit()
     return cursor.rowcount
 
