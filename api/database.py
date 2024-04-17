@@ -162,7 +162,8 @@ def deleteService(fecha, matricula):
     sql = "DELETE FROM servicios WHERE fecha = %s AND matricula = %s"
     cursor.execute(sql, (fecha, matricula))
     database.commit()
-    return cursor.rowcount
+    count = cursor.rowcount
+    return count
 
 def getTallerServices(taller):
     cursor = database.cursor()

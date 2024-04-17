@@ -145,9 +145,10 @@ def getVehicleServices(matricula: str):
     return response
 
 @app.post("/addService")
-def addService(service: Servicio):
+def addService(service: Servicio, taller: str):
     rowcount = db.insertService(service.fecha, service.matricula, service.descripcion)
     print(rowcount)
+    updateWidgetPlot(taller)
     return {"message": "Service added"}
 
 @app.post("/addVehicle")
@@ -204,9 +205,10 @@ def deleteClient(nombre: str):
     return {"message": "Client deleted"}
 
 @app.delete("/deleteService")
-def deleteService(fecha: str, matricula: str):
-    db.deleteService(fecha, matricula)
-    return {"message": "Service deleted"}
+def deleteService(fecha: str, matricula: str, taller: str):
+    rowcount = db.deleteService(fecha, matricula)
+    updateWidgetPlot(taller)
+    return {"message": f"Service deleted. New graph in http://34.155.61.4/widgetPlots/{taller}.png"}
 
 @app.get("/generateWidgetGraph")
 def generateWidgetGraph(taller: str):
@@ -215,6 +217,13 @@ def generateWidgetGraph(taller: str):
     counts = monthResults(result)
     barPlot(counts, taller)
     return {"message": f"http://34.155.61.4/widgetPlots/{taller}.png"}
+
+def updateWidgetPlot(taller: str):
+    result = db.getTallerServices(taller)
+    result = [date_list[0] for date_list in result]
+    counts = monthResults(result)
+    barPlot(counts, taller)
+    print(f'{taller}\'s plot updated')
 
 def monthResults(results):
     diction = {
