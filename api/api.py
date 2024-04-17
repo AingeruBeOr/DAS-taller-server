@@ -250,7 +250,8 @@ def barPlot(counts, taller):
 
     months = [str(pp_month), str(p_month), str(current_month) + ' (Actual)']
     values = [counts['-2'], counts['-1'], counts['current']]
-    plt.bar(months, values)
+    plt.figure(figsize=(2, 4))
+    plt.bar(months, values, width = 0.5)
     plt.savefig(f'./static/widgetPlots/{taller}.png')
 
 @app.get("/clientsLocations")
