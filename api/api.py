@@ -10,6 +10,7 @@ import fcm
 import os
 from datetime import datetime
 import matplotlib.pyplot as plt
+import math
 
 
 class Cliente(BaseModel):
@@ -259,7 +260,9 @@ def barPlot(counts, taller):
 
     months = [str(pp_month), str(p_month), str(current_month) + ' (Actual)']
     values = [counts['-2'], counts['-1'], counts['current']]
+    y_ticks = range(0, math.ceil(max(values) + 1))
     plt.figure(figsize=(2, 4))
+    plt.yticks(y_ticks)
     plt.bar(months, values, width = 0.5)
     plt.savefig(f'./static/widgetPlots/{taller}.png')
 
