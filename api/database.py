@@ -28,6 +28,13 @@ def getServices():
     result = cursor.fetchall()
     return result
 
+def getUsers():
+    cursor = database.cursor()
+    sql = "SELECT * FROM appUsers"
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result
+
 def userExists(username):
     cursor = database.cursor()
     sql = "SELECT * FROM appUsers WHERE username = %s"

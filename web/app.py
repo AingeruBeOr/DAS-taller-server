@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import secrets
 import os
+import requests
 
 
 app = Flask(__name__)
@@ -9,9 +10,9 @@ app.secret_key = secrets.token_hex()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-
+    users = requests.get('http://34.155.61.4/users').json()
+    clients = requests.get('http://34.155.61.4/clients').json()
+    return render_template('index.html', users=users, clients=clients)
 
 
 if __name__ == '__main__':

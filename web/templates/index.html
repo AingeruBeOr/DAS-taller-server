@@ -3,13 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <title>Benchmark</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <button>Enviar notificación</button>
+    <h1>Banco de pruebas</h1>
+
+    <h2>Gestión de notificaciones</h2>
+    <button id="btn-notifications">Enviar notificación a todos los dispositivos</button>
+
+    <h2>Crear usuarios tipo cliente</h2>
+    <input id="username" type="text" placeholder="Nombre">
+    <input id="password" type="password" placeholder="Contraseña">
+    <button id="btn-user-create">Crear usuario</button>
+
+    <h2>Asignar cliente de un taller a un usuario tipo cliente</h2>
+    <p>Si has creado un usuario tipo cliente desde aquí, recarga la página para verlo en la lista.</p>
+    <div>
+        <label for="user-selector">Usuarios tipo cliente</label>
+        <select name="" id="user-selector">
+            {% for user in users %}
+                {% if user.tipo == "cliente" %}
+                    <option value="{{ user.username }}">{{ user.username }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <br>
+    <div>
+        <label for="client-selector">Clientes</label>
+        <select name="" id="client-selector">
+            {% for client in clients %}
+                <option value="{{ client.nombre }}">{{ client.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <br>
+    <button id="btn-asignar">Asignar</button>
 
     <script>
-        document.querySelector('button').addEventListener('click', function() {
+        document.getElementById('btn-notifications').addEventListener('click', function() {
             fetch('http://34.155.61.4/messageToEveryone', {method: 'GET'})
+        });
+
+        document.getElementById('btn-user-create').addEventListener('click', function() {
+            let username = document.getElementById('username').value;
+            let password = document.getElementById('password').value;
+            
+            fetch(`http://34.155.61.4/register?username=${username}&password=${password}&tipo=cliente`, {method: 'GET'})
+                .then(response => response.json()).then(data => {
+                    console.log(`Created user ${username} with password ${password}`);
+                    alert(data.message);
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    
+                })
+            });
+
+        document.getElementById('btn-asignar').addEventListener('click', function() {
+            let username = document.getElementById('user-selector').value;
+            let client = document.getElementById('client-selector').value;
+            console.log(username, client);
+
+            fetch(`http://34.155.61.4/userClient?username=${username}&clientName=${client}`, {method: 'GET'})
+                .then(response => response.json()).then(data => {
+                    console.log(`Assigned user ${username} to client ${client}`);
+                    alert(`Asignado cliente ${client} a usuario ${username}`);
+                })
         });
     </script>
 </body>

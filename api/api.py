@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 import firebase_admin.messaging
 import database as db
 from pydantic import BaseModel
@@ -37,8 +38,22 @@ app = FastAPI()
 app.mount("/documentaciones", StaticFiles(directory="documentaciones"), name="documentaciones")
 app.mount("/widgetPlots", StaticFiles(directory="static/widgetPlots"), name="widgetPlots")
 
+# Firebase configuration
 cred = credentials.Certificate("das-android-firebase-adminsdk.json")
 default_app = firebase_admin.initialize_app(credential=cred)            # Set the service account
+
+# Middleware para permitir solicitudes desde el origen de la aplicación web
+origins = [
+    "http://34.155.61.4:3000",  # Permitir solicitudes desde este origen
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
@@ -82,6 +97,18 @@ def get_services():
             'fecha': service[0],
             'matricula': service[1],
             'descripcion': service[2],
+        })
+    return response
+
+@app.get("/users")
+def get_users():
+    users = db.getUsers()
+    response = []
+    for user in users:
+        response.append({
+            'username': user[0],
+            'password': user[1],
+            'tipo': user[2],
         })
     return response
 
@@ -164,6 +191,11 @@ def addClient(client: Cliente, username: str, latitude: str, longitude: str):
     print(rowcount)
     return {"message": "Client added"}
 
+@app.get("/userClient")
+def insertUserClient(username: str, clientName: str):
+    rowcount = db.insertUserClient(username, clientName)
+    return {"message": "User-Client relationship added"}
+
 @app.post("/FCMdevice")
 def addFCMtoken(token: str):
     if db.FCMtokenExists(token):
@@ -190,6 +222,13 @@ async def vehicleDocumentation(matricula: str, image: UploadFile):
     db.insertVehicleDocumentation(matricula, image.filename)
     return {"message": "Document added"}
 
+@app.get("/vehicleHasDocumentation")
+def vehicleHasDocumentation(matricula: str):
+    print(f"Checking if {matricula} has documentation")
+    path = db.getVehicleDocumentationPath(matricula)
+    if path == None: return {"message": "false"}
+    else: return {"message": "true"}
+
 @app.get("/getVehicleDocumentation")
 def getVehicleDocumentation(matricula: str):
     documentacionPath = db.getVehicleDocumentationPath(matricula)
@@ -213,10 +252,7 @@ def deleteService(fecha: str, matricula: str, taller: str):
 
 @app.get("/generateWidgetGraph")
 def generateWidgetGraph(taller: str):
-    result = db.getTallerServices(taller)
-    result = [date_list[0] for date_list in result]
-    counts = monthResults(result)
-    barPlot(counts, taller)
+    updateWidgetPlot(taller)
     return {"message": f"http://34.155.61.4/widgetPlots/{taller}.png"}
 
 def updateWidgetPlot(taller: str):
