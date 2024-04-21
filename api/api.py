@@ -133,6 +133,7 @@ def register(username: str, password: str, tipo: str):
         return {"message": "User already exists"}
     else:
         db.createUser(username, password, tipo)
+        updateWidgetPlot(username)
         return {"message": "User created"}
 
 @app.get("/clientsFromUser")
@@ -194,6 +195,7 @@ def addClient(client: Cliente, username: str, latitude: str, longitude: str):
 @app.get("/userClient")
 def insertUserClient(username: str, clientName: str):
     rowcount = db.insertUserClient(username, clientName)
+    updateWidgetPlot(username)
     return {"message": "User-Client relationship added"}
 
 @app.post("/FCMdevice")
