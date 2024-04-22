@@ -4,7 +4,6 @@ import database as db
 
 def send_messages_to_everyone():
     registration_tokens = [token_tuple[0] for token_tuple in db.getFCMtokens()]
-    print(registration_tokens)
 
     message = firebase_admin.messaging.MulticastMessage(
         notification=firebase_admin.messaging.Notification(
@@ -15,8 +14,5 @@ def send_messages_to_everyone():
     )
 
     response = firebase_admin.messaging.send_multicast(message)
-    print(response)
-    print(response.failure_count)
-    print(response._responses)
-    print(response._responses[0].exception)
+    print('{0} messages can have been sent'.format(response.failure_count))
     print('{0} messages were sent successfully'.format(response.success_count))
