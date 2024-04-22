@@ -59,7 +59,7 @@ def createUser(username, password, tipo):
 
 def getClientsFromUser(username):
     cursor = database.cursor()
-    sql = """SELECT C.nombre, C.teléfono, C.email 
+    sql = """SELECT C.nombre, C.telefono, C.email 
              FROM userClientes, clientes as C 
              WHERE userName = %s AND C.nombre = userClientes.clienteName"""
     cursor.execute(sql, (username,))
@@ -103,7 +103,7 @@ def insertVehicle(matricula, marca, modelo, nombreCliente):
 
 def insertClient(nombre, telefono, email, latitude, longitude):
     cursor = database.cursor()
-    sql = "INSERT INTO clientes (nombre, teléfono, email, latitude, longitude) VALUES (%s, %s, %s, %s, %s)"
+    sql = "INSERT INTO clientes (nombre, telefono, email, latitude, longitude) VALUES (%s, %s, %s, %s, %s)"
     cursor.execute(sql, (nombre, telefono, email, latitude, longitude))
     database.commit()
     return cursor.rowcount
