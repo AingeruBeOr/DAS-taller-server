@@ -59,7 +59,7 @@ def createUser(username, password, tipo):
 
 def getClientsFromUser(username):
     cursor = database.cursor()
-    sql = """SELECT C.nombre, C.telefono, C.email 
+    sql = """SELECT C.nombre, C.teléfono, C.email 
              FROM userClientes, clientes as C 
              WHERE userName = %s AND C.nombre = userClientes.clienteName"""
     cursor.execute(sql, (username,))
